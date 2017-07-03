@@ -101,6 +101,10 @@ public class DBConnection {
 			return lastInsertedId; 
 	 }
 	 
+	 /**
+	  * Elimina todos los reigistro de la tabla y reinicia la cuenta de ids
+	  * @throws SQLException
+	  */
 	 public void deleteAll() throws SQLException{			
 			try{
 				preparedStatement = connect
@@ -112,33 +116,54 @@ public class DBConnection {
 			}	         
 	}
 	 
-	 
-
-		/**
-		 * SELECT columna FROM tabla WHERE key = value;
-		 * @return 
-		 * @throws SQLException 
-		 */
-		public ArrayList<Map> select(int id) throws SQLException { 
-			String selectSQL = "SELECT id, myuser, email, webpage, summary,datum,comments FROM "+DB_TABLE+" WHERE id = ?";
-			ArrayList<Map> map = null; 
-			
+	 /**
+	  * Elimina un registro por su ID
+	  * @param id registro a eliminar
+	  * @throws SQLException
+	  */
+	 public void delete(int id) throws SQLException{		
 			try {
 				preparedStatement = connect
-				        .prepareStatement(selectSQL);
-				preparedStatement.setInt(1,id);
-				resultSet = preparedStatement.executeQuery();
-				 map= resultSetToCollection(resultSet); 
-			} catch (SQLException e) {
-				close(); 
-	            throw e;
-			} 
+				        .prepareStatement("delete from "+DB_TABLE+"  where id= ? ; ");
+				 preparedStatement.setInt(1, id);
+		         preparedStatement.executeUpdate();
 			
-			return  map;  
-		}
-	 
+		    } catch (SQLException e) {
+		    	close(); 
+	            throw e;
+			}
+	}
 	 
 
+	/**
+	 * SELECT columna FROM tabla WHERE key = value;
+	 * @return 
+	 * @throws SQLException 
+	 */
+	@SuppressWarnings("rawtypes")
+	public ArrayList<Map> select(int id) throws SQLException { 
+		String selectSQL = "SELECT id, myuser, email, webpage, summary,datum,comments FROM "+DB_TABLE+" WHERE id = ?";
+		ArrayList<Map> map = null; 
+		
+		try {
+			preparedStatement = connect
+			        .prepareStatement(selectSQL);
+			preparedStatement.setInt(1,id);
+			resultSet = preparedStatement.executeQuery();
+			 map= resultSetToCollection(resultSet); 
+		} catch (SQLException e) {
+			close(); 
+            throw e;
+		} 
+		
+		return  map;  
+	}
+	
+	
+	public void update(){
+		
+	}
+ 
 	
 	 // You need to close the resultSet
     public void close() {
@@ -163,10 +188,11 @@ public class DBConnection {
         }
     }
     
-    
-    private ArrayList<Map> resultSetToCollection(ResultSet resultSet) throws SQLException { 
+	 @SuppressWarnings("rawtypes")
+    private static ArrayList<Map> resultSetToCollection(ResultSet resultSet) throws SQLException { 
         // ResultSet is initially before the first data set
-    	 ArrayList<Map> list = new ArrayList<Map>(); 
+
+		ArrayList<Map> list = new ArrayList<Map>(); 
     	
         while (resultSet.next()) {
         	HashMap<String,String> hashMap = new HashMap<String,String>(); 
