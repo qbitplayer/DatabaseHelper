@@ -38,7 +38,7 @@ public class TestDataBase {
 		Assert.assertEquals(true,result); 
 	}
 	
-	//@Test
+	@Test
 	public void testInsert(){
 		DBConnection connector = new DBConnection("dbtest");
 		int id = -1; 
@@ -56,11 +56,11 @@ public class TestDataBase {
 	
 	
 
-	@Test
+	//@Test
 	public void testSelect(){
 		DBConnection connector = new DBConnection("dbtest");
 		int id = -1; 
-		ArrayList<Map> arrayResult = null;  
+		ArrayList<HashMap> arrayResult = null;  
 		
 		try {
 			connector.connect(); 

@@ -17,7 +17,7 @@ public class DBConnection {
 		
 	 private static final String DB_TABLE = "comments"; 
 	 
-	private final String name; 
+	 private final String name; 
 	 private Connection connect;
 	 private Statement statement;
 	 private ResultSet resultSet;  
@@ -141,16 +141,22 @@ public class DBConnection {
 	 * @throws SQLException 
 	 */
 	@SuppressWarnings("rawtypes")
-	public ArrayList<Map> select(int id) throws SQLException { 
-		String selectSQL = "SELECT id, myuser, email, webpage, summary,datum,comments FROM "+DB_TABLE+" WHERE id = ?";
-		ArrayList<Map> map = null; 
+	public ArrayList<HashMap> select(int id) throws SQLException { 
+		String selectSQL = "SELECT id, myuser, email, webpage, summary,datum,comments FROM "+
+							DB_TABLE+" WHERE id = ?";
+		
+		ArrayList<HashMap> map = null; 
 		
 		try {
 			preparedStatement = connect
 			        .prepareStatement(selectSQL);
+			
 			preparedStatement.setInt(1,id);
+			
 			resultSet = preparedStatement.executeQuery();
+			
 			 map= resultSetToCollection(resultSet); 
+			 
 		} catch (SQLException e) {
 			close(); 
             throw e;
@@ -160,6 +166,12 @@ public class DBConnection {
 	}
 	
 	
+	/**
+	 * help String strSQL = "UPDATE tabla set myuser = ?  where id = ?";
+	 * 
+	 * num_point
+	 * 
+	 */
 	public void update(){
 		
 	}
@@ -188,15 +200,19 @@ public class DBConnection {
         }
     }
     
+    
+    
 	 @SuppressWarnings("rawtypes")
-    private static ArrayList<Map> resultSetToCollection(ResultSet resultSet) throws SQLException { 
+    private static ArrayList<HashMap> resultSetToCollection(ResultSet resultSet)
+    		throws SQLException { 
         // ResultSet is initially before the first data set
 
-		ArrayList<Map> list = new ArrayList<Map>(); 
+		ArrayList<HashMap> list = new ArrayList<HashMap>(); 
     	
         while (resultSet.next()) {
-        	HashMap<String,String> hashMap = new HashMap<String,String>(); 
-        	 String id = resultSet.getString("id");
+        	
+        	// lee el resultado i 
+        	int id = resultSet.getInt("id");
             String user = resultSet.getString("myuser");
             String email = resultSet.getString("email");
             String website = resultSet.getString("webpage");
@@ -204,14 +220,15 @@ public class DBConnection {
             Date date = resultSet.getDate("datum");
             String comment = resultSet.getString("comments");
        
-            hashMap.put("id",id);
+            HashMap<String,String> hashMap = new HashMap<String,String>(); 
+            hashMap.put("id",String.valueOf(id));
             hashMap.put("user",user);
             hashMap.put("email",email);
             hashMap.put("webpage",website);
             hashMap.put("summary",summary);
             hashMap.put("date",date.toString());
             hashMap.put("comments",comment);
-            
+            // adiciono el nuevo hashMap a el ArrayList<HashMap>
             list.add(hashMap);  
         }
         
